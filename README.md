@@ -1,2 +1,2 @@
 # TMFSS
-Transformer Based Multi Factor Stock Selection
+Transformer Based Multi-Factor Stock Selection
