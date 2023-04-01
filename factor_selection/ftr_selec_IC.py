@@ -11,7 +11,9 @@ rq.init()
 
 # 获取股票池
 universe = get_index_stocks('000300.XSHG', date='2022-03-31')
-universe = sorted(universe, key=lambda x: finance.run_query(query(finance.SW1_DAILY_PRICE).filter(finance.SW1_DAILY_PRICE.code == x, finance.SW1_DAILY_PRICE.date == '2022-03-31').first().sw1_code))
+universe = sorted(universe, key=lambda x: finance.run_query(
+    query(finance.SW1_DAILY_PRICE).filter(finance.SW1_DAILY_PRICE.code == x,
+                                          finance.SW1_DAILY_PRICE.date == '2022-03-31').first().sw1_code))
 
 # 选取市值排名前100的股票
 market_cap = finance.run_query(
@@ -29,6 +31,7 @@ roe = get_factor('roe', market_cap.index, '2022-03-31', '2022-03-31').T
 eps = get_factor('eps', market_cap.index, '2022-03-31', '2022-03-31').T
 peg_ratio = pe_ratio / eps
 
+
 # 计算每个因子的IC值
 def calc_ic(factor_data, close_data, n):
     factor_returns = factor_data.pct_change()
@@ -37,6 +40,7 @@ def calc_ic(factor_data, close_data, n):
     ic = ic.dropna()
     ic = ic.sort_values(ascending=False)[:n]
     return ic
+
 
 # 使用IC法筛选因子
 def select_factors(factor_data, close_data, n):
@@ -52,8 +56,10 @@ def select_factors(factor_data, close_data, n):
     selected_factors = factor_data[ic_mean.index]
     return selected_factors
 
+
 # 筛选出最有用的5个因子
-close_data = get_price(market_cap.index, start_date='2022-03-31', end_date='2022-03-31', fields='close', frequency='1d').close
+close_data = get_price(market_cap.index, start_date='2022-03-31', end_date='2022-03-31', fields='close',
+                       frequency='1d').close
 factor_data = get_factor(universe, '2022-03-31', '2022-03-31')
 selected_factors = select_factors(factor_data, close_data, 5)
 
